@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multi-Source Web Scraping Pipeline: Results</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f7f7f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--line:#e3e3de;--accent:#1f6feb}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--card:#1f1f1e;--text:#ececea;--muted:#9a9a94;--line:#323230;--accent:#6ea8fe}}
+:root[data-theme="dark"]{--bg:#161615;--card:#1f1f1e;--text:#ececea;--muted:#9a9a94;--line:#323230;--accent:#6ea8fe}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+main{max-width:860px;margin:0 auto;padding:32px 20px 56px}
+h1{font-size:1.8rem;margin:0 0 6px}
+h2{font-size:1.15rem;margin:36px 0 12px}
+.sub{color:var(--muted);margin:0 0 18px}
+a{color:var(--accent)}
+.btn{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);text-decoration:none;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat b{display:block;font-size:1.7rem}
+.stat span{color:var(--muted);font-size:.85rem}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.92rem;white-space:nowrap}
+th{color:var(--muted);font-weight:600}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.9rem}
+.flow i{color:var(--muted);font-style:normal}
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px}
+code{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.88rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Multi-Source Web Scraping Pipeline</h1>
+<p class="sub">Python ETL: scrape, clean, validate, deduplicate and consolidate two sites into one dataset.</p>
+<a class="btn" href="https://github.com/GouthamiPotharaju/web-scraping-assignment">View code on GitHub</a>
+
+<h2>Final run</h2>
+<div class="grid">
+<div class="stat"><b>1,100</b><span>final rows in CSV</span></div>
+<div class="stat"><b>1,000</b><span>books (50 pages)</span></div>
+<div class="stat"><b>100</b><span>quotes (10 pages)</span></div>
+<div class="stat"><b>0</b><span>rejected</span></div>
+<div class="stat"><b>0</b><span>duplicates</span></div>
+<div class="stat"><b>0</b><span>failed URLs</span></div>
+<div class="stat"><b>22 min</b><span>run time (1,341 s)</span></div>
+<div class="stat"><b>19</b><span>unit tests passing</span></div>
+</div>
+
+<h2>Per-source summary</h2>
+<div class="wrap"><table>
+<tr><th>Source</th><th>Collected</th><th>Cleaned</th><th>Rejected</th><th>Duplicates</th><th>Final</th><th>Pages</th></tr>
+<tr><td>Books to Scrape</td><td>1000</td><td>1000</td><td>0</td><td>0</td><td>1000</td><td>50</td></tr>
+<tr><td>Quotes to Scrape</td><td>100</td><td>100</td><td>0</td><td>0</td><td>100</td><td>10</td></tr>
+<tr><td><b>Total</b></td><td><b>1100</b></td><td><b>1100</b></td><td><b>0</b></td><td><b>0</b></td><td><b>1100</b></td><td><b>60</b></td></tr>
+</table></div>
+<p class="sub">Counts reconcile: raw − cleaning errors − rejected − duplicates = final.</p>
+
+<h2>Pipeline</h2>
+<div class="flow"><span>Scrape</span><i>→</i><span>Clean</span><i>→</i><span>Validate</span><i>→</i><span>Deduplicate</span><i>→</i><span>Consolidate</span><i>→</i><span>CSV + JSON + log</span></div>
+
+<h2>Design decisions</h2>
+<div class="note"><b>Pagination:</b> follows the <code>li.next &gt; a</code> link until none remains; no hard-coded page numbers.</div>
+<p></p>
+<div class="note"><b>Failures:</b> session retries (1s/2s/4s backoff) on 429/5xx and dropped connections; a bad record is skipped, a failed page stops only that source.</div>
+<p></p>
+<div class="note"><b>Deduplication:</b> books use source + title + price; quotes use source + author + first 50 characters. Price was added after the real data showed two different books titled "The Star-Touched Queen" (£46.02 and £32.30), which a title-only rule had wrongly merged.</div>
+<p></p>
+<div class="note"><b>Descriptions:</b> the site's HTML repeats a truncated copy of each description and sometimes has mis-encoded characters; both are cleaned.</div>
+
+<h2>Common schema</h2>
+<p><code>source</code> <code>source_url</code> <code>name_or_title</code> <code>category</code> <code>price</code> <code>rating</code> <code>author</code> <code>tags</code> <code>description</code> <code>scraped_at</code>. Fields that do not apply to a source are left empty, never invented.</p>
+
+<h2>Run it</h2>
+<p><code>pip install -r requirements.txt</code> then <code>python main.py</code>. Outputs: <code>output/final_dataset.csv</code>, <code>output/summary_report.json</code>, <code>logs/scraper.log</code>.</p>
+</main>
+</body>
+</html>
