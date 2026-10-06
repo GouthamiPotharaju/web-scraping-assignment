@@ -1,0 +1,43 @@
+{
+    "per_source": {
+        "Books to Scrape": {
+            "collected": 1000,
+            "cleaning_errors": 0,
+            "cleaned": 1000,
+            "rejected": 0,
+            "rejected_by_reason": {},
+            "duplicates": 0,
+            "final": 1000,
+            "pages_scraped": 50,
+            "parse_errors": 0,
+            "failed_urls": [],
+            "source_error": null
+        },
+        "Quotes to Scrape": {
+            "collected": 100,
+            "cleaning_errors": 0,
+            "cleaned": 100,
+            "rejected": 0,
+            "rejected_by_reason": {},
+            "duplicates": 0,
+            "final": 100,
+            "pages_scraped": 10,
+            "parse_errors": 0,
+            "failed_urls": [],
+            "source_error": null
+        }
+    },
+    "totals": {
+        "collected": 1100,
+        "cleaned": 1100,
+        "rejected": 0,
+        "duplicates": 0,
+        "final": 1100
+    },
+    "final_record_count": 1100,
+    "counts_reconcile": true,
+    "note": "rejected_by_reason counts each failed rule; one record can fail several rules.",
+    "start_time": "2026-10-06T10:10:25+00:00",
+    "end_time": "2026-10-06T10:32:47+00:00",
+    "duration_seconds": 1341.4
+}
